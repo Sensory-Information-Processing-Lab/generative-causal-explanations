@@ -4,7 +4,7 @@ Code for "Generative causal explanations of black-box classifiers" by Matt O'Sha
 - [numpy](https://numpy.org/)
 - [pytorch](https://pytorch.org/)
 
-## Guide to make plots
+## Guide to recreate plots
 *Figure 3* (global explanations of MNIST digits):
 - To train classifier: Run `MNIST_CNN_train.py`, set `model` to `mnist` and `class_use` to `np.array([3,8])`
 - To train explanatory VAE: Run `CVAE.py`, set `data_type` to `mnist`, `decoder_net` to `VAE_CNN`, and `classifier` to `cnn`
@@ -71,3 +71,7 @@ Code for "Generative causal explanations of black-box classifiers" by Matt O'Sha
 - To train classifier: Run `MNIST_CNN_train.py`, choose `model` to be `fmnist` and `class_use` to `np.array([0,3,4])`
 - To train explanatory VAE: Run `CVAE.py`, set `data_type` to `fmnist`, `decoder_net` to `VAE_fMNIST`, and `classifier` to `cnn_fmnist`
 - To make plots: run `make_fmnist_qual.py`. This script loads pretrained classifier and VAE models; change the paths and parameters at the top of the script to generate plots from different models.
+
+*Figures 18-19* (decomposed objective and global explanations of fashion MNIST with varying VAE capacity)
+- To train classifier: Run `MNIST_CNN_train.py`, choose `model` to be `fmnist` and `class_use` to `np.array([0,3,4])`
+- To make plots: run `make_vae_capacity.py`. This script loads the pretrained classifier model, and trains explainers with different capacities and values of lambda. The file `make_vae_capacity.m` generates the plots in Figure 18.
