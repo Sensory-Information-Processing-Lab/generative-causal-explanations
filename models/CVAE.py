@@ -24,7 +24,9 @@ class Encoder(nn.Module):
         self.fc_logvar = nn.Linear(int(filt_per_layer*x_dim/16), z_dim)
     
     def encode(self, x):
+        print("CVAE input shape: ", x.shape)
         z = self.model(x)
+        print("Z shape: ", z.shape)
         z = z.view(z.shape[0], -1)
         return self.fc_mu(z), self.fc_logvar(z)
     

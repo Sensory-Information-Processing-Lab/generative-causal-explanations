@@ -1,7 +1,7 @@
 import numpy as np
 import scipy as sp
 import torch
-
+import matplotlib
 
 def formProjMat(A):
     """
@@ -25,7 +25,7 @@ def inverse_transform(images):
 
 
 def imsave(images, size, path):
-  return sp.misc.imsave(path, merge(images, size))
+  return matplotlib.pyplot.imsave(path, merge(images, size)) #sp.misc.imsave(path, merge(images, size))
 
 
 def merge(images, size):

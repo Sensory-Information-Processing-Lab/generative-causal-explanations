@@ -18,7 +18,7 @@ import torchvision.models as models
 import pickle
 
 import loss_functions
-import causaleffect
+import old.causaleffect
 import plotting
 import util
 
@@ -141,11 +141,11 @@ def CVAE(model = "mnist_VAE_CNN", # currently not used
                 debug["cossim_what%dwhat%d"%(i+1,j+1)] = np.zeros((steps))
     if save_plot: frames = []
     if data_type == 'mnist' or data_type == 'fmnist':
-        class_use = np.array([0,3,4])
+        class_use = np.array([3,8])
         class_use_str = np.array2string(class_use)    
         y_dim = class_use.shape[0]
         newClass = range(0,y_dim)
-        save_dir = '/home/mnorko/Documents/Tensorflow/causal_vae/results/fmnist_class034/' + data_type + '_' + objective + '_zdim' + str(z_dim) + '_alpha' + str(alpha_dim) + '_No' + str(No) + '_Ni' + str(Ni) + '_lam' + str(lam_ML) + '_class' + class_use_str[1:(len(class_use_str)-1):2] + '/'
+        save_dir = 'C:/Users/Dylan/Desktop/FACT/Figure3/mnist_class38/' + data_type + '_' + objective + '_zdim' + str(z_dim) + '_alpha' + str(alpha_dim) + '_No' + str(No) + '_Ni' + str(Ni) + '_lam' + str(lam_ML) + '_class' + class_use_str[1:(len(class_use_str)-1):2] + '/'
     else:
         save_dir = '/home/mnorko/Documents/Tensorflow/causal_vae/results/imagenet/' + data_type + '_' + objective + '_zdim' + str(z_dim) + '_alpha' + str(alpha_dim) + '_No' + str(No) + '_Ni' + str(Ni) + '_lam' + str(lam_ML)  + '_cont_kl0.1/'
     if not os.path.exists(save_dir):
@@ -268,10 +268,10 @@ def CVAE(model = "mnist_VAE_CNN", # currently not used
         decoder = Decoder(x_dim, z_dim).to(device)
         decoder.apply(weights_init_normal)
     elif decoder_net == 'VAE_CNN' or 'VAE_fMNIST':
-        from VAEModel_CNN import Decoder, Encoder
-        encoder = Encoder(z_dim,c_dim,img_size).to(device)
+        from models.CVAE import Decoder, Encoder
+        encoder = Encoder(z_dim,c_dim,img_size*28).to(device)
         encoder.apply(weights_init_normal)
-        decoder = Decoder(z_dim,c_dim,img_size).to(device)
+        decoder = Decoder(z_dim,c_dim,img_size*28).to(device)
         decoder.apply(weights_init_normal)
     elif decoder_net == 'VAE_Imagenet':
         checkpoint = torch.load('/home/mnorko/Documents/Tensorflow/causal_vae/results/imagenet/imagenet_JOINT_UNCOND_zdim40_alpha0_No20_Ni1_lam0.001/' + 'network_batch' + str(batch_size) + '.pt')
@@ -293,10 +293,10 @@ def CVAE(model = "mnist_VAE_CNN", # currently not used
         classifier = TwoHyperplaneClassifier(x_dim, y_dim, Pw1_torch, Pw2_torch, ksig=5.).to(device)
         classifier.apply(weights_init_normal)
     elif classifier_net == 'cnn':
-        from cnnClassifierModel import CNN
+        from models.CNN_classifier import CNN
         classifier = CNN(y_dim).to(device)
         batch_orig = 64
-        checkpoint = torch.load('./mnist_batch64_lr0.1_class38/network_batch' + str(batch_orig) + '.pt')
+        checkpoint = torch.load('C:/Users/Dylan/Desktop/FACT/Figure3/mnist_batch64_lr0.1_class38/network_batch' + str(batch_orig) + '.pt')
         #checkpoint = torch.load('/home/mnorko/Documents/Tensorflow/causal_vae/results/mnist_batch64_lr0.1_class149/network_batch' + str(batch_orig) + '.pt')
         classifier.load_state_dict(checkpoint['model_state_dict_classifier'])
     elif classifier_net == 'cnn_fmnist':
@@ -370,11 +370,11 @@ def CVAE(model = "mnist_VAE_CNN", # currently not used
         
         # --- compute mutual information causal effect term ---
         if objective == "IND_UNCOND":
-            causalEffect, ceDebug = causaleffect.ind_uncond(params, decoder, classifier,device, What=What)
+            causalEffect, ceDebug = old.causaleffect.ind_uncond(params, decoder, classifier,device, What=What)
         elif objective == "IND_COND":
             causalEffect, ceDebug = causaleffect.ind_cond(params, decoder, classifier,device, What=What)
         elif objective == "JOINT_UNCOND":
-            causalEffect, ceDebug = causaleffect.joint_uncond(params, decoder, classifier,device, What=What)                        
+            causalEffect, ceDebug = causaleffect.joint_uncond(params, decoder, classifier,device)
         elif objective == "JOINT_COND":
             causalEffect, ceDebug = causaleffect.joint_cond(params, decoder, classifier,device, What=What)
         
@@ -488,22 +488,22 @@ def CVAE(model = "mnist_VAE_CNN", # currently not used
 
 
 lambda_change = [0.001]
-obj_change = ["JOINT_UNCOND"]
-alpha_change = [0]
-z_dim_change = [1,2,3,4,5,6,7,8,9]
+obj_change = ["IND_UNCOND"]
+alpha_change = [1]
+z_dim_change = [3]
 for obj_use  in obj_change:
     for z_use in z_dim_change:
         for lam_use in lambda_change:
             for alpha_use in alpha_change:
                 trail_results = CVAE(
-                    steps = 8000,
-                    batch_size = 32,
+                    steps = 1000,
+                    batch_size = 64,
                     lam_ML = lam_use,
-                    decoder_net = "VAE_fMNIST",
-                    classifier_net = "cnn_fmnist",
+                    decoder_net = "VAE_CNN",
+                    classifier_net = "cnn",
                     use_ce = False,
                     objective = obj_use,
-                    data_type = "fmnist", 
+                    data_type = "mnist",
                     break_up_ce= True,
                     x_dim = 3,
                     z_dim = z_use,

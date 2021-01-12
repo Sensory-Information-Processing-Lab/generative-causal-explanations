@@ -15,7 +15,7 @@ import scipy.io as sio
 import os
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model', type=str, default='fmnist', help='folder name')
+parser.add_argument('--model', type=str, default='mnist', help='folder name')
 parser.add_argument('--epochs', type=int, default=50, help='number of epochs of training')
 parser.add_argument('--batch_size', type=int, default=64, help='size of the batches')
 parser.add_argument('--c_dim', type=int, default=1, help='number of color channels in the input image')
@@ -31,14 +31,14 @@ batch_size = opt.batch_size
 c_dim = opt.c_dim
 lr = opt.lr
 
-class_use = np.array([0,3,4])
+class_use = np.array([3,8])
 class_use_str = np.array2string(class_use)
 y_dim = class_use.shape[0]
 newClass = range(0,y_dim)
 test_size = 100
 
 #save_folder = '/home/mnorko/Documents/Tensorflow/causal_vae/' + opt.model + '_batch' + str(batch_size)  + '_lr' + str(opt.lr) + '/'
-save_folder = '/home/mnorko/Documents/Tensorflow/causal_vae/results/' + opt.model + '_batch' + str(batch_size) + '_lr' + str(opt.lr) + '_class' + class_use_str[1:(len(class_use_str)-1):2] + '/'
+save_folder = 'C:/Users/Dylan/Desktop/FACT/Figure3/' + opt.model + '_batch' + str(batch_size) + '_lr' + str(opt.lr) + '_class' + class_use_str[1:(len(class_use_str)-1):2] + '/'
 if not os.path.exists(save_folder):
     os.makedirs(save_folder)
 # Device configuration
@@ -58,7 +58,7 @@ batch_idxs = len(trX) // opt.batch_size
 batch_idxs_val = len(vaX) // test_size    
 ce_loss = nn.CrossEntropyLoss()
 
-from cnnClassifierModel import CNN
+from models.CNN_classifier import CNN
 classifier = CNN(y_dim).to(device)
 optimizer = torch.optim.SGD(classifier.parameters(), lr=lr, momentum=opt.momentum)
 scheduler = StepLR(optimizer, step_size=1, gamma=opt.gamma)

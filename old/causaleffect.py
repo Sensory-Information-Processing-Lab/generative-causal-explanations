@@ -25,8 +25,8 @@ Outputs:
     (Note: negCausalEffect = negHYhat + EalphaHYhatgivenalpha
 """
 def ind_uncond(params, decoder, classifier, device, What=None):
-    params["Ni"] = params["Nalpha"] # TODO - check this and replace Ni below
-    params["No"] = params["Nbeta"] # TODO - check this and replace No below
+    # params["Ni"] = params["Nalpha"] # TODO - check this and replace Ni below
+    # params["No"] = params["Nbeta"] # TODO - check this and replace No below
     latent_vec = np.zeros((params["alpha_dim"]*params["No"]*params["Ni"],params["z_dim"]))
     count = 0
     for kk in range(params["alpha_dim"]):
